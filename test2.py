@@ -63,8 +63,9 @@ def find_defects_by_comparison_sift(original_image,template_image,threshold_feat
     #gray_image2 = cv2.equalizeHist(gray_image2)
     ssim = compare_ssim(gray_image1, gray_image2)
 
-    print(len(good_matches),threshold_feature*len(good_matches2))
-    print(ssim)
+    print("sift特征匹配识别到特征点的百分比：",len(good_matches)/len(good_matches2))
+    print("sift特征匹配后比较的相似度：",ssim)
+    print()
     # 检测缺陷
     if len(good_matches) < threshold_feature*len(good_matches2) or ssim < threshold_ssim: 
         have_defect=True
@@ -143,8 +144,9 @@ def find_defects_by_comparison_orb(original_image,template_image,threshold_featu
     #gray_image2 = cv2.equalizeHist(gray_image2)
     ssim = compare_ssim(gray_image1, gray_image2)
 
-    print(len(good_matches),threshold_feature*len(good_matches2))
-    print(ssim)
+    print("orb特征匹配识别到特征点的百分比：",len(good_matches)/len(good_matches2))
+    print("orb特征匹配后比较的相似度:",ssim)
+    print()
     # 检测缺陷
     if len(good_matches) < threshold_feature*len(good_matches2) or ssim < threshold_ssim: 
         have_defect=True
@@ -194,7 +196,7 @@ if __name__ == "__main__":
     original_image = cv2.imread('boot.jpg')
     template_image = cv2.imread('boot_break.jpg')
     threshold1=0.85
-    threshold2=0.85
+    threshold2=0.87
     have_defect=find_defects_by_comparison(original_image,template_image,threshold1,threshold2)
     if have_defect==False: 
         print("防尘套未检测到缺陷")
