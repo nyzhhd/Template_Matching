@@ -106,7 +106,7 @@ if __name__ == "__main__":
     import os
     threshold=0.53
     
-    gk_folder = '1'
+    gk_folder = 'gk'
     i=0
     j=0
     for filename in os.listdir(gk_folder):
