@@ -51,8 +51,6 @@ def find_defects_by_comparison_sift(original_image,template_image,threshold_feat
     else:
         image2_stabilized = template_image
 
-    #cv2.imshow("Image", template_image)
-    #cv2.imshow("Image2", image2_stabilized)
 
     # 计算相似性度量
     #灰度化
@@ -73,9 +71,9 @@ def find_defects_by_comparison_sift(original_image,template_image,threshold_feat
         have_defect=False
 
     # 显示结果图像
-    cv2.imshow("Matched Image Sift", matched_image)
-    cv2.waitKey(0)
-    cv2.destroyAllWindows()
+    # cv2.imshow("Matched Image Sift", matched_image)
+    # cv2.waitKey(0)
+    # cv2.destroyAllWindows()
     return have_defect
 
 def find_defects_by_comparison_orb(original_image,template_image,threshold_feature=0.8,threshold_ssim=0.8):
@@ -131,9 +129,8 @@ def find_defects_by_comparison_orb(original_image,template_image,threshold_featu
         image2_stabilized = cv2.warpAffine(template_image, M, (template_image.shape[1], template_image.shape[0]))
     else:
         image2_stabilized = template_image
+    image2_stabilized = template_image
 
-    #cv2.imshow("Image", template_image)
-    #cv2.imshow("Image2", image2_stabilized)
 
     # 计算相似性度量
     #灰度化
@@ -154,9 +151,9 @@ def find_defects_by_comparison_orb(original_image,template_image,threshold_featu
         have_defect=False
 
     # 显示结果图像
-    cv2.imshow("Matched Image Orb", matched_image)
-    cv2.waitKey(0)
-    cv2.destroyAllWindows()
+    # cv2.imshow("Matched Image Orb", matched_image)
+    # cv2.waitKey(0)
+    # cv2.destroyAllWindows()
     return have_defect
 
 def find_defects_by_comparison(original_image,template_image,threshold_feature=0.8,threshold_ssim=0.8):
@@ -170,9 +167,18 @@ def find_defects_by_comparison(original_image,template_image,threshold_feature=0
     if original_image.shape != template_image.shape:
         # 如果尺寸不同，将第二张图片调整为与第一张图片相同的尺寸
         template_image = cv2.resize(template_image, (original_image.shape[1], original_image.shape[0]))
-    have_defect1=find_defects_by_comparison_sift(original_image,template_image,threshold_feature,threshold_ssim)
-    have_defect2=find_defects_by_comparison_orb(original_image,template_image,threshold_feature,threshold_ssim)
-    if have_defect1 == False or have_defect2 == False:
+
+    
+    try:
+        have_defect1=find_defects_by_comparison_sift(original_image,template_image,threshold_feature,threshold_ssim)
+    except:
+        have_defect1 = False    
+    try:
+        have_defect2=find_defects_by_comparison_orb(original_image,template_image,threshold_feature,threshold_ssim)
+    except:
+        have_defect2 = False
+    
+    if have_defect1 == False and have_defect2 == False:
         return False
     else:
         return True
@@ -181,7 +187,7 @@ def find_defects_by_comparison(original_image,template_image,threshold_feature=0
 
 if __name__ == "__main__":
     pass
-    # # 加载原始图像和模板图像
+    #加载原始图像和模板图像
     # original_image = cv2.imread('boltnut.jpg')
     # template_image = cv2.imread('lostboltnut.jpg')
     # threshold1=0.85
@@ -193,21 +199,21 @@ if __name__ == "__main__":
     #     print("排障器螺栓检测到缺陷")
 
 
-    original_image = cv2.imread('boot.jpg')
-    template_image = cv2.imread('boot_break.jpg')
-    threshold1=0.85
-    threshold2=0.87
-    have_defect=find_defects_by_comparison(original_image,template_image,threshold1,threshold2)
-    if have_defect==False: 
-        print("防尘套未检测到缺陷")
-    else:
-        print("防尘套检测到缺陷")
+    # original_image = cv2.imread('boot.jpg')
+    # template_image = cv2.imread('boot2.jpg')
+    # threshold1=0.85
+    # threshold2=0.87
+    # have_defect=find_defects_by_comparison(original_image,template_image,threshold1,threshold2)
+    # if have_defect==False: 
+    #     print("防尘套未检测到缺陷")
+    # else:
+    #     print("防尘套检测到缺陷")
 
 
     # original_image = cv2.imread('fsts.png')
-    # template_image = cv2.imread('fstsds.png')
+    # template_image = cv2.imread('fsts2.jpg')
     # threshold1=0.85
-    # threshold2=0.85
+    # threshold2=0.87
     # have_defect=find_defects_by_comparison(original_image,template_image,threshold1,threshold2)
     # if have_defect==False:
     #     print("防松铁丝未检测到缺陷")
@@ -215,15 +221,23 @@ if __name__ == "__main__":
     #     print("防松铁丝检测到缺陷")
 
 
-    # original_image = cv2.imread('kwx.jpg')
-    # template_image = cv2.imread('kwxb.jpg')
-    # threshold1=0.85
-    # threshold2=0.85
-    # have_defect=find_defects_by_comparison(original_image,template_image,threshold1,threshold2)
-    # if have_defect==False: 
-    #     print("开尾销未检测到缺陷")
-    # else:
-    #     print("开尾销检测到缺陷")
+    
+    template_image = cv2.imread('BoltHead_20231113231427_8209.jpg')
+    import os
+    threshold1=0.85
+    threshold2=0.85
+
+    gk_folder = 'gk'
+    for filename in os.listdir(gk_folder):
+        print('++++++++++++++++++++++++++++++++++++++++')
+        image_path = os.path.join(gk_folder, filename)
+        original_image = cv2.imread(image_path)
+        have_defect = find_defects_by_comparison(original_image, template_image, threshold1, threshold2)
+        if have_defect == False:
+            print(f"{filename} 未检测到缺陷")
+        else:
+            print(f"{filename} 检测到缺陷")
+
 
     # original_image = cv2.imread('mq(1).jpg')
     # template_image = cv2.imread('mq2(1).jpg')
